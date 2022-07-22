@@ -2,12 +2,9 @@ h1 {
   color: blue;
 }
 input {
-  display: block;
+  display: inline-block;
   margin: 10px;
 }
 #book-form {
-  display: none;
+  margin: 10px;
 }
-/* .new-book {
-  display: none;
-} */

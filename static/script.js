@@ -1,6 +1,4 @@
 const newBookForm = document.querySelector('.new-book');
-const newBookButton = document.querySelector('.add-new-book');
-const cancelButton = document.querySelector(".cancel");
 const bookForm = document.getElementById('book-form');
 const ul = document.getElementById('books');
 
@@ -21,16 +19,6 @@ const bookFactory = (author, title, numOfPages, hasRead=false) => {
     info
   };
 }
-
-// new book form
-newBookButton.addEventListener('click', () => {
-  bookForm.style.display = "block";
-})
-
-// close new book form
-cancelButton.addEventListener('click', () => {
-  newBookForm.style.display = "none";
-})
 
 // function to display books
 function displayBooks(){
