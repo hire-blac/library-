@@ -5,41 +5,79 @@ const bookForm = document.getElementById('book-form');
 const ul = document.getElementById('books');
 
 
+// factory method to create a new book object
+const bookFactory = (author, title, numOfPages, hasRead=false) => {
+  const getAuthor = () => author;
+  const getTitle = () => title;
+  const getPages = () => numOfPages;
+  const info = () => {
+    return `${title} by ${author}, ${numOfPages} pages . ${hasRead ? ' read' : ' not yet read'}`;
+  }
+
+  return {
+    getAuthor,
+    getTitle,
+    getPages,
+    info
+  };
+}
+
+// new book form
 newBookButton.addEventListener('click', () => {
   bookForm.style.display = "block";
 })
 
+// close new book form
 cancelButton.addEventListener('click', () => {
   newBookForm.style.display = "none";
 })
 
-let myLibrary = []
+// function to display books
+function displayBooks(){
 
-function Book(author, title, numOfPages,hasRead=false) {
-  this.author = author
-  this.title = title
-  this.numOfPages = numOfPages
-  this.hasRead = hasRead
-}
-
-// prototype function for Book
-Book.prototype.info = function() {
-  return `${this.title} by ${this.author}, ${this.numOfPages} pages, ${this.hasRead ? 'has read' : 'not read yet'}`
-}
-
-// factory method to create a new book object
-const bookFactory = (author, title, numOfPages, hasRead=false) => {
-  const info = () => {
-    return `${title} by ${author}, ${numOfPages} pages. ${hasRead} ? read : not yet read`;
+  // clear the list of books
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
   }
+ 
+  let count = 0;
 
-  return {author, title, numOfPages, hasRead, info};
+  myLibrary.forEach(book => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+
+    btn.textContent = "remove book";
+    btn.setAttribute('id', `book ${count}`);
+    btn.addEventListener('click', e=>removeBook(e.target));
+
+    li.textContent = book.info();
+    btn.style.margin = "0 10px";
+    li.style.margin = "15px";
+
+    li.appendChild(btn);
+
+    li.setAttribute('id', count);
+    ul.appendChild(li);
+    count +=1;
+  });
 }
 
 // function to add books to library
 function addBookToLibrary(book) {
   myLibrary.push(book)
 }
+
+// remove book from library
+function removeBook(target){
+  myLibrary.splice(target.id.split(' ')[1], 1);
+
+  //  display list of books
+ displayBooks()
+
+}
+
+// library array containing book objects
+let myLibrary = []
 
 // create new book objects
 let book1 = bookFactory('Sydney Sheldon', 'Windmill of the gods', 356, true)
@@ -55,48 +93,17 @@ addBookToLibrary(book3)
 addBookToLibrary(book4)
 addBookToLibrary(book5)
 
+bookForm.addEventListener('submit', e => {
+  e.preventDefault()
+  let title = e.target['title'].value;
+  let author = e.target['author'].value;
+  let numPages = e.target['numPages'].value;
+  let hasRead = e.target['hasRead'].checked;
+  let newBook = bookFactory(author, title, numPages, hasRead);
+  
+  addBookToLibrary(newBook);
 
-function displayBooks(){
-  let count = 0;
+  displayBooks();
+});
 
-    myLibrary.forEach(book => {
-      const li = document.createElement('li');
-      const btn = document.createElement('button');
-
-      btn.addEventListener('click', e=>removeBook(e.target));
-
-      li.textContent = book.info();
-      btn.textContent = "remove book";
-      btn.style.margin = "0 10px";
-      li.style.margin = "15px";
-
-      li.appendChild(btn);
-
-      li.setAttribute('id', book.title);
-      btn.setAttribute('data-book-id', count);
-      ul.appendChild(li);
-      count +=1;
-    });
-}
-
-function addBook(){
-    let title = document.getElementById('title').value
-    let author = document.getElementById('author').value
-    let numPages = document.getElementById('numPages').value
-    let hasRead = document.getElementById('hasRead').checked
-    let book = new Book(author, title, numPages,hasRead)
-    addBookToLibrary(book)
-}
-
-function removeBook(target){
-   myLibrary.splice(target.dataset.bookId, 1);
-
-  // clear the list of books
-  while (ul.firstChild) {
-    ul.removeChild(ul.firstChild);
-  }
-
-  displayBooks()
-}
-
-displayBooks()
+displayBooks();
